@@ -15,8 +15,10 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     paddingVertical: 20,
     flexWrap: 'wrap',
+    justifyContent: 'center',
     padding: 24,
   },
+  block: {margin: 5},
   image: {width: 100, height: 100, margin: 5},
   description: {width: 100, textAlign: 'center'},
   title: {fontWeight: 'bold'},
@@ -27,11 +29,10 @@ const HomeScreen = ({navigation}) => {
   const [images, setImages] = useState([]);
 
   useEffect(() => {
-    fetch('https://api.unsplash.com/photos?per_page=12', {
+    fetch('https://api.unsplash.com/photos?per_page=30', {
       headers: {
         'Content-Type': 'application/json',
-        Authorization:
-          'Client-ID 896d4f52c589547b2134bd75ed48742db637fa51810b49b607e37e46ab2c0043',
+        Authorization: 'Client-ID t4o7W4kwd5UfBG-Nenycl7sk_uS5G4mVJsQ6_RblbCM',
       },
     })
       .then((response) => response.json())
@@ -48,7 +49,7 @@ const HomeScreen = ({navigation}) => {
         <ActivityIndicator />
       ) : (
         images.map(({id, urls, user, alt_description}) => (
-          <View key={id}>
+          <View key={id} style={styles.block}>
             <TouchableOpacity
               onPress={() => {
                 navigation.navigate('FullScreenImage', {
