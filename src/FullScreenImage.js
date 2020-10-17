@@ -2,7 +2,7 @@ import React from 'react';
 import {Image, StyleSheet} from 'react-native';
 
 const styles = StyleSheet.create({
-  image: {flex: 1, resizeMode: 'cover'},
+  image: {flex: 1, resizeMode: 'contain'},
 });
 
 const FullScreenImage = ({route}) => {

@@ -1,13 +1,14 @@
-import React, {useState, useEffect} from 'react';
+import React, {useEffect} from 'react';
+import {connect} from 'react-redux';
 import {
   Text,
   View,
   StyleSheet,
-  ActivityIndicator,
   Image,
   TouchableOpacity,
   ScrollView,
 } from 'react-native';
+import fetchImages from './redux/operations';
 
 const styles = StyleSheet.create({
   container: {
@@ -15,8 +16,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     paddingVertical: 20,
     flexWrap: 'wrap',
-    justifyContent: 'center',
-    padding: 24,
+    justifyContent: 'space-evenly',
   },
   block: {margin: 5},
   image: {width: 100, height: 100, margin: 5},
@@ -24,54 +24,48 @@ const styles = StyleSheet.create({
   title: {fontWeight: 'bold'},
 });
 
-const HomeScreen = ({navigation}) => {
-  const [isLoading, setLoading] = useState(true);
-  const [images, setImages] = useState([]);
-
+const HomeScreen = ({navigation, onFetchImages, images}) => {
   useEffect(() => {
-    fetch('https://api.unsplash.com/photos?per_page=30', {
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: 'Client-ID t4o7W4kwd5UfBG-Nenycl7sk_uS5G4mVJsQ6_RblbCM',
-      },
-    })
-      .then((response) => response.json())
-      .then((images) => {
-        setImages(images);
-      })
-      .catch((error) => console.error(error))
-      .finally(() => setLoading(false));
+    onFetchImages();
   }, []);
 
   return (
     <ScrollView contentContainerStyle={styles.container}>
-      {isLoading ? (
-        <ActivityIndicator />
-      ) : (
-        images.map(({id, urls, user, alt_description}) => (
-          <View key={id} style={styles.block}>
-            <TouchableOpacity
-              onPress={() => {
-                navigation.navigate('FullScreenImage', {
-                  urls: urls,
-                });
-              }}>
-              <Image
-                style={styles.image}
-                source={{
-                  uri: urls.small,
-                }}></Image>
-            </TouchableOpacity>
+      {images
+        ? images.map(({id, urls, user, alt_description}) => (
+            <View key={id} style={styles.block}>
+              <TouchableOpacity
+                onPress={() => {
+                  navigation.navigate('FullScreenImage', {
+                    urls: urls,
+                  });
+                }}>
+                <Image
+                  style={styles.image}
+                  source={{
+                    uri: urls.small,
+                  }}></Image>
+              </TouchableOpacity>
 
-            <Text style={[styles.description, styles.title]}>
-              {alt_description}
-            </Text>
-            <Text style={styles.description}>{user.name}</Text>
-          </View>
-        ))
-      )}
+              <Text style={[styles.description, styles.title]}>
+                {alt_description}
+              </Text>
+              <Text style={styles.description}>{user.name}</Text>
+            </View>
+          ))
+        : null}
     </ScrollView>
   );
 };
 
-export default HomeScreen;
+const mapStateToProps = (state) => {
+  return {
+    images: state.images,
+  };
+};
+
+const mapDispatchToProps = {
+  onFetchImages: fetchImages,
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(HomeScreen);
