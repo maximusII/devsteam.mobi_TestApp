@@ -31,7 +31,7 @@ const HomeScreen = ({navigation, onFetchImages, images}) => {
 
   return (
     <ScrollView contentContainerStyle={styles.container}>
-      {images
+      {images.length > 0
         ? images.map(({id, urls, user, alt_description}) => (
             <View key={id} style={styles.block}>
               <TouchableOpacity
